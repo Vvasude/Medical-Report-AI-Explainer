@@ -1,13 +1,29 @@
 import os
 import tempfile
+import threading
 
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 
-from backend.rag.chain import get_rag_chain, parse_chain_response
 from backend.rag.loader import load_pdf
+from backend.rag.parse_response import parse_chain_response
 
 app = FastAPI()
+
+_chain = None
+_chain_lock = threading.Lock()
+
+
+def _get_chain_lazy():
+    """Defer heavy imports (torch, embeddings, chroma) until after uvicorn binds the port."""
+    global _chain
+    if _chain is None:
+        with _chain_lock:
+            if _chain is None:
+                from backend.rag.chain import get_rag_chain
+
+                _chain = get_rag_chain()
+    return _chain
 
 # Local + LAN (Vite "Network" URL, e.g. http://10.0.0.122:8080) for dev
 _LAN_DEV = (
@@ -33,8 +49,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-chain = get_rag_chain()
-
 @app.get("/health")
 def health_check():
     return {"status": "ok"}
@@ -54,6 +68,7 @@ async def analyze(file: UploadFile = File(...)):
         chunks = load_pdf(tmp_path)
         full_text = "\n".join(chunk["text"] for chunk in chunks)
 
+        chain = _get_chain_lazy()
         response = chain.invoke({"query": full_text})
         parsed = parse_chain_response(response["result"])
 

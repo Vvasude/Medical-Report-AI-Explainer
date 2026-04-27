@@ -8,8 +8,6 @@ from langchain_chroma import Chroma
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_huggingface import HuggingFaceEmbeddings
 import os
-import re
-import json
 
 load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
@@ -78,8 +76,3 @@ def get_rag_chain():
         chain_type_kwargs={"prompt": prompt}
     )
     return chain
-
-def parse_chain_response(raw: str) -> dict:
-    # Strip markdown code fences if Gemini adds them
-    cleaned = re.sub(r"```json|```", "", raw).strip()
-    return json.loads(cleaned)
