@@ -4,3 +4,33 @@
 
 # LangGraph
 .langgraph_api/
+
+# Environment variables
+.env
+**/.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.venv/
+venv/
+env/
+
+# Node / frontend
+node_modules/
+dist/
+build/
+
+# OS / editors
+.DS_Store
+.idea/
+.vscode/
