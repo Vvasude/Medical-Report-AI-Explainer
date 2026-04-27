@@ -3,13 +3,4 @@
 Exposes `app` from `backend/main.py` for platform auto-detection.
 """
 
-import os
-import sys
-
-ROOT_DIR = os.path.dirname(__file__)
-BACKEND_DIR = os.path.join(ROOT_DIR, "backend")
-
-if BACKEND_DIR not in sys.path:
-    sys.path.insert(0, BACKEND_DIR)
-
-from main import app  # noqa: E402,F401
+from backend.main import app  # noqa: F401

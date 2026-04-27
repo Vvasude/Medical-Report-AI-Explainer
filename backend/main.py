@@ -1,9 +1,11 @@
-from fastapi import FastAPI, UploadFile, File, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
-from rag.loader import load_pdf
-from rag.chain import get_rag_chain, parse_chain_response
-import tempfile
 import os
+import tempfile
+
+from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
+
+from backend.rag.chain import get_rag_chain, parse_chain_response
+from backend.rag.loader import load_pdf
 
 app = FastAPI()
 
@@ -13,6 +15,9 @@ _LAN_DEV = (
     r"|172\.(1[6-9]|2\d|3[01])\.\d{1,3}\.\d{1,3}):(8080|5173)"
 )
 
+frontend_origins_env = os.getenv("FRONTEND_ORIGINS", "")
+frontend_origins = [origin.strip() for origin in frontend_origins_env.split(",") if origin.strip()]
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -20,6 +25,7 @@ app.add_middleware(
         "http://127.0.0.1:8080",
         "http://localhost:5173",
         "http://127.0.0.1:5173",
+        *frontend_origins,
     ],
     allow_origin_regex=_LAN_DEV,
     allow_credentials=True,
