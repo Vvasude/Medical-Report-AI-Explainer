@@ -5,8 +5,7 @@ from dotenv import load_dotenv
 from langchain_classic.chains import RetrievalQA
 from langchain_core.prompts import PromptTemplate
 from langchain_chroma import Chroma
-from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
 import os
 
 load_dotenv(Path(__file__).resolve().parent.parent / ".env")
@@ -42,9 +41,8 @@ Use this exact structure:
 """
 
 def get_rag_chain():
-    embeddings = HuggingFaceEmbeddings(
-        model_name="sentence-transformers/all-MiniLM-L6-v2"
-    )
+    embedding_model = os.getenv("EMBEDDING_MODEL", "models/text-embedding-004")
+    embeddings = GoogleGenerativeAIEmbeddings(model=embedding_model)
 
     api_key = os.getenv("CHROMA_API_KEY")
     tenant = os.getenv("CHROMA_TENANT")

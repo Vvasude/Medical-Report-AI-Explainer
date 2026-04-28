@@ -7,6 +7,4 @@ langchain
 langchain-chroma
 langchain-classic
 langchain-google-genai
-langchain-huggingface
-sentence-transformers
 pymupdf

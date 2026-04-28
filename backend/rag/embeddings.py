@@ -3,7 +3,7 @@ from pathlib import Path
 
 import chromadb
 from dotenv import load_dotenv
-from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_google_genai import GoogleGenerativeAIEmbeddings
 
 load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
@@ -20,9 +20,8 @@ def get_chroma_client():
 
 
 def get_embeddings():
-    return HuggingFaceEmbeddings(
-        model_name="sentence-transformers/all-MiniLM-L6-v2"
-    )
+    embedding_model = os.getenv("EMBEDDING_MODEL", "models/text-embedding-004")
+    return GoogleGenerativeAIEmbeddings(model=embedding_model)
 
 
 def store_chunks(chunks: list[dict], collection_name: str = "lab_guidelines"):
