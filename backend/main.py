@@ -54,14 +54,14 @@ def health_check():
     return {"status": "ok"}
 
 @app.post("/analyze")
-async def analyze(file: UploadFile = File(...)):
+def analyze(file: UploadFile = File(...)):
     if not (file.filename or "").lower().endswith(".pdf"):
         raise HTTPException(status_code=400, detail="Only PDF files are accepted")
 
     tmp_path = None
     try:
         with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
-            contents = await file.read()
+            contents = file.file.read()
             tmp.write(contents)
             tmp_path = tmp.name
 
